@@ -204,30 +204,29 @@
   .as-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
+    font-size: 11px;
   }
   .as-table th {
     background: var(--bg3);
     color: var(--text2);
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     text-transform: uppercase;
-    padding: 8px 6px;
+    padding: 6px 4px;
     text-align: left;
     position: sticky;
     top: 0;
-    white-space: nowrap;
   }
   .as-table td {
-    padding: 8px 6px;
+    padding: 6px 4px;
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
   }
   .as-table tr:last-child td { border-bottom: none; }
   .as-table tr.crew-stop  td { background: rgba(67,160,71,0.07); }
   .as-table tr.bike-crew  td { background: rgba(251,140,0,0.07); }
-  .as-table .icon-cell { text-align: center; font-size: 14px; }
+  .as-table .icon-cell { text-align: center; }
   .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--card-radius); }
 
   /* ── To-Do ──────────────────────────────────────── */
@@ -605,9 +604,9 @@ function buildTimeline() {
         <span style="font-size:11px;font-weight:700;color:var(--text2);">52-mile route · aid stations · OpenStreetMap</span>
         <span style="font-size:11px;color:var(--text2);">Open in Google Maps ↗</span>
       </div>
-      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;background:#fff;border-radius:0 0 var(--card-radius) var(--card-radius);">
+      <div style="background:#fff;border-radius:0 0 var(--card-radius) var(--card-radius);">
         <img src="./course-map.png" alt="Big Horn 52 Course Map"
-             style="display:block;width:100%;min-width:480px;height:auto;">
+             style="display:block;width:100%;height:auto;">
       </div>
     </div>
   </a>`;
@@ -617,9 +616,9 @@ function buildTimeline() {
     <div style="padding:10px 12px 6px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:baseline;">
       <span style="font-size:11px;font-weight:700;color:var(--text2);">50 MI · Elev Loss 4,962 ft · Climb 8,293 ft · Drop 13,255 ft</span>
     </div>
-    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;background:#fff;border-radius:0 0 var(--card-radius) var(--card-radius);">
+    <div style="background:#fff;border-radius:0 0 var(--card-radius) var(--card-radius);">
       <img src="./elevation-profile.png" alt="Big Horn 52 Elevation Profile"
-           style="display:block;width:100%;min-width:480px;height:auto;">
+           style="display:block;width:100%;height:auto;">
     </div>
   </div>`;
 
@@ -648,8 +647,8 @@ function buildASChart() {
   const tbody = document.getElementById('as-tbody');
   tbody.innerHTML = stations.map(s => {
     const cutoff = s.cutoff ? `<span style="color:var(--red);font-weight:700">${s.cutoff}</span>` : '—';
-    const gain = s.gain ? `<span style="color:var(--green);font-size:11px">+${s.gain.toLocaleString()}'</span>` : '—';
-    const loss = s.loss ? `<span style="color:var(--red);font-size:11px">-${s.loss.toLocaleString()}'</span>` : '—';
+    const gain = s.gain ? `<span style="color:var(--green)">+${s.gain.toLocaleString()}'</span>` : '—';
+    const loss = s.loss ? `<span style="color:var(--red)">-${s.loss.toLocaleString()}'</span>` : '—';
     return `<tr>
       <td><strong>${s.label}</strong><br><span style="font-size:10px;color:var(--text2)">${s.loc}</span></td>
       <td style="font-weight:700">${s.mi}</td>
