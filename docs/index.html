@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Big Horn 52">
+<link rel="manifest" href="manifest.json">
+<title>Big Horn 52</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #1a1d27;
+    --bg3: #242838;
+    --border: #2e3347;
+    --text: #e8eaf0;
+    --text2: #9ba3bc;
+    --accent: #43a047;
+    --accent2: #7c5cbf;
+    --gold: #f0a500;
+    --green: #43a047;
+    --red: #e53935;
+    --orange: #fb8c00;
+    --card-radius: 12px;
+    --nav-h: 64px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+  }
+
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 10px;
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+    flex-shrink: 0;
+  }
+  header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  header h1 span { color: var(--accent); }
+  header p { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+  main {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .tab-panel { display: none; padding: 16px; padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 16px); }
+  .tab-panel.active { display: block; }
+
+  nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    display: flex;
+    height: calc(var(--nav-h) + var(--safe-bottom));
+    padding-bottom: var(--safe-bottom);
+    z-index: 100;
+    flex-shrink: 0;
+  }
+  nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    padding-bottom: 4px;
+  }
+  nav button svg { width: 22px; height: 22px; }
+  nav button.active { color: var(--accent); }
+  nav button.active svg path, nav button.active svg rect,
+  nav button.active svg circle, nav button.active svg polyline,
+  nav button.active svg line { stroke: var(--accent); }
+
+  /* ── Cards ─────────────────────────────────────── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .card-body { padding: 12px 14px; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin: 20px 0 10px;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* ── Pills ─────────────────────────────────────── */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin: 2px;
+  }
+  .pill-blue   { background: rgba(77,157,224,0.18);  color: #4d9de0; }
+  .pill-gold   { background: rgba(240,165,0,0.18);   color: var(--gold); }
+  .pill-green  { background: rgba(67,160,71,0.18);   color: var(--green); }
+  .pill-red    { background: rgba(229,57,53,0.18);   color: var(--red); }
+  .pill-purple { background: rgba(124,92,191,0.18);  color: var(--accent2); }
+  .pill-orange { background: rgba(251,140,0,0.18);   color: var(--orange); }
+
+  /* ── Timeline ───────────────────────────────────── */
+  .stops-list { display: flex; flex-direction: column; gap: 2px; }
+  .stop-row {
+    display: flex;
+    align-items: center;
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 8px 10px;
+    gap: 10px;
+    border-left: 3px solid var(--border);
+  }
+  .stop-row.required   { border-left-color: var(--accent); }
+  .stop-row.optional   { border-left-color: var(--text2); }
+  .stop-row.dropbag    { border-left-color: var(--gold); }
+  .stop-row.crew-bike  { border-left-color: var(--orange); }
+  .stop-row.finish     { border-left-color: var(--green); }
+  .stop-row.prerace    { border-left-color: #4d9de0; }
+
+  .stop-time {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 90px;
+    white-space: nowrap;
+  }
+  .stop-row.prerace   .stop-time { color: #4d9de0; }
+  .stop-row.crew-bike .stop-time { color: var(--orange); }
+  .stop-row.finish    .stop-time { color: var(--green); }
+  .stop-row.optional  .stop-time { color: var(--text2); }
+
+  .stop-name { font-size: 13px; font-weight: 600; flex: 1; }
+  .stop-sub  { font-size: 11px; color: var(--text2); }
+  .stop-info { display: flex; flex-direction: column; flex: 1; gap: 2px; }
+  .stop-mile {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text2);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  .day-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 0 10px;
+  }
+  .day-divider span {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+  .day-divider::before, .day-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── AS Chart ───────────────────────────────────── */
+  .as-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .as-table th {
+    background: var(--bg3);
+    color: var(--text2);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 8px 6px;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    white-space: nowrap;
+  }
+  .as-table td {
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .as-table tr:last-child td { border-bottom: none; }
+  .as-table tr.crew-stop  td { background: rgba(67,160,71,0.07); }
+  .as-table tr.bike-crew  td { background: rgba(251,140,0,0.07); }
+  .as-table .icon-cell { text-align: center; font-size: 14px; }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--card-radius); }
+
+  /* ── To-Do ──────────────────────────────────────── */
+  .todo-station {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .todo-station-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .todo-station-header h3 { font-size: 14px; font-weight: 700; flex: 1; }
+  .todo-station-header .progress { font-size: 11px; color: var(--text2); font-weight: 600; white-space: nowrap; }
+  .todo-station-header .chevron  { font-size: 12px; color: var(--text2); transition: transform 0.2s; }
+  .todo-station.open .chevron { transform: rotate(180deg); }
+  .todo-station-sub {
+    font-size: 11px;
+    color: var(--text2);
+    padding: 4px 14px 10px;
+    border-bottom: 1px solid var(--border);
+    display: none;
+  }
+  .todo-station.open .todo-station-sub { display: block; }
+  .todo-items { display: none; }
+  .todo-station.open .todo-items { display: block; }
+
+  .todo-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.1s;
+  }
+  .todo-item:last-child { border-bottom: none; }
+  .todo-item:active { background: var(--bg3); }
+  .todo-check {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    transition: all 0.15s;
+  }
+  .todo-item.done .todo-check { background: var(--green); border-color: var(--green); }
+  .todo-item.done .todo-check::after { content: '✓'; color: white; font-size: 13px; font-weight: 700; }
+  .todo-label { font-size: 13px; line-height: 1.4; flex: 1; }
+  .todo-item.done .todo-label { color: var(--text2); text-decoration: line-through; }
+
+  .todo-progress-bar { height: 3px; background: var(--border); overflow: hidden; }
+  .todo-progress-bar-fill { height: 100%; background: var(--green); transition: width 0.3s; }
+
+  .reset-btn {
+    font-size: 11px; color: var(--text2); background: none; border: none;
+    cursor: pointer; padding: 2px 6px; text-decoration: underline; float: right;
+  }
+
+  /* ── Crew Access ─────────────────────────────────── */
+  .crew-rules {
+    background: rgba(229,57,53,0.08);
+    border: 1px solid rgba(229,57,53,0.25);
+    border-radius: var(--card-radius);
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .crew-rules h3 { font-size: 12px; font-weight: 700; color: var(--red); margin-bottom: 8px; letter-spacing: 0.5px; }
+  .crew-rule { display: flex; gap: 8px; margin-bottom: 6px; font-size: 12px; line-height: 1.4; }
+  .crew-rule:last-child { margin-bottom: 0; }
+  .crew-rule-label { font-weight: 700; color: var(--red); min-width: 96px; flex-shrink: 0; }
+
+  .crew-stop-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .crew-stop-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .crew-stop-header h3 { font-size: 14px; font-weight: 700; }
+  .crew-stop-header .cutoff { font-size: 11px; font-weight: 700; color: var(--red); white-space: nowrap; margin-top: 2px; }
+  .crew-field { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 12px; line-height: 1.5; }
+  .crew-field:last-child { border-bottom: none; }
+  .crew-field-label { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text2); margin-bottom: 3px; }
+  .crew-field-val { color: var(--text); }
+  .crew-field .warn { color: var(--red); font-size: 11px; margin-top: 3px; line-height: 1.4; }
+  .crew-field .walk { color: var(--gold); font-weight: 600; }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Big Horn <span>52</span></h1>
+    <p>Race Start: Sat Jun 20 · 5:00 AM · Jaws Trailhead · 2 Runners · 1 Crew</p>
+  </header>
+
+  <main id="main">
+
+    <!-- ═══════════════════ TIMELINE ═══════════════════ -->
+    <section id="tab-timeline" class="tab-panel active">
+      <div id="timeline-container"></div>
+    </section>
+
+    <!-- ═══════════════════ AS CHART ═══════════════════ -->
+    <section id="tab-chart" class="tab-panel">
+      <div class="table-scroll">
+        <table class="as-table">
+          <thead>
+            <tr>
+              <th>Station</th>
+              <th>Mi</th>
+              <th>Elev</th>
+              <th>Aid</th>
+              <th>Cut-Off</th>
+              <th title="Elevation gain from previous station">↑</th>
+              <th title="Elevation loss from previous station">↓</th>
+            </tr>
+          </thead>
+          <tbody id="as-tbody"></tbody>
+        </table>
+      </div>
+      <div style="font-size:10px;color:var(--text2);margin-top:10px;">
+        ↑ gain / ↓ loss from previous station
+      </div>
+    </section>
+
+    <!-- ═══════════════════ TO-DO LISTS ═══════════════════ -->
+    <section id="tab-todo" class="tab-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-size:12px;color:var(--text2);">Tap to expand. Checks save automatically.</div>
+        <button class="reset-btn" onclick="resetAllTodos()">Reset all</button>
+      </div>
+      <div id="todo-container"></div>
+    </section>
+
+    <!-- ═══════════════════ DROP BAGS ═══════════════════ -->
+    <section id="tab-dropbag" class="tab-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-size:12px;color:var(--text2);">Tap to expand. Checks save automatically.</div>
+        <button class="reset-btn" onclick="resetAllDropBags()">Reset all</button>
+      </div>
+      <div id="dropbag-container"></div>
+    </section>
+
+    <!-- ═══════════════════ CREW ACCESS ═══════════════════ -->
+    <section id="tab-crew" class="tab-panel">
+      <div id="crew-container"></div>
+    </section>
+
+  </main>
+
+  <nav id="nav">
+    <button class="active" data-tab="timeline" onclick="switchTab('timeline', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Timeline
+    </button>
+    <button data-tab="chart" onclick="switchTab('chart', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+      AS Chart
+    </button>
+    <button data-tab="todo" onclick="switchTab('todo', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      To-Do
+    </button>
+    <button data-tab="dropbag" onclick="switchTab('dropbag', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Drop Bags
+    </button>
+    <button data-tab="crew" onclick="switchTab('crew', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Crew
+    </button>
+  </nav>
+</div>
+
+<script>
+// ── Tab switching ────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('main').scrollTop = 0;
+}
+
+// ══════════════════════════════════════════════════════
+// GENERATED from config/timeline.yaml — edit that file, not this
+// ══════════════════════════════════════════════════════
+const TIMELINE = {
+  sections: [
+    {
+      day: 'Friday — Jun 19',
+      events: [
+        {
+          display: 'prerace',
+          time: '12–6 PM',
+          name: 'Packet Pick-Up + Drop Bag Drop-Off',
+          location: 'Sheridan Inn · 856 Broadway St, Sheridan WY',
+          mile_label: 'Pre-race',
+          pills: [
+            { text: 'find out where bus pickup is', style: 'gold' },
+          ]
+        },
+      ]
+    },
+    {
+      day: 'Saturday — Jun 20',
+      events: [
+        {
+          display: 'optional',
+          time: '3:15 AM',
+          name: 'Bus Departs',
+          location: 'The Best Western Sheridan Center',
+          mile_label: null,
+          pills: [
+            { text: 'Prepaid ticket required', style: 'red' },
+          ]
+        },
+        {
+          display: 'optional',
+          time: '5:00 AM',
+          name: 'Race Start — Jaws Trailhead',
+          location: 'Forest Service Rd 13 / US-14A',
+          mile_label: 'Mi 0',
+          pills: []
+        },
+        {
+          display: 'dropbag',
+          time: '~9 AM',
+          name: "Sally's Footbridge, Mile 18",
+          location: null,
+          mile_label: 'Mi 18',
+          pills: [
+            { text: 'Drop Bag', style: 'gold' },
+            { text: 'Cut-off 10:00 AM', style: 'red' },
+          ]
+        },
+        {
+          display: 'required',
+          time: '~1–2PM',
+          name: 'Dry Fork — CREW STOP, Mile 34',
+          location: null,
+          mile_label: 'Mi 34.5',
+          pills: [
+            { text: '★ Crew by car', style: 'green' },
+            { text: 'Drop Bag', style: 'gold' },
+            { text: 'Cut-off 3:00 PM', style: 'red' },
+          ]
+        },
+        {
+          display: 'crew-bike',
+          time: '~6–7PM',
+          name: 'Home Stretch, Mile 50',
+          location: null,
+          mile_label: 'Mi 49.7',
+          pills: [
+            { text: 'Crew on FOOT only', style: 'orange' },
+            { text: 'No cut-off', style: 'green' },
+          ]
+        },
+        {
+          display: 'finish',
+          time: '~7–8 PM',
+          name: 'Finish — Scott Park',
+          location: null,
+          mile_label: 'Mi 52',
+          pills: [
+            { text: 'Cut-off 8:00 PM', style: 'green' },
+          ]
+        },
+      ]
+    }
+  ],
+  cards: [
+    {
+      type: 'drop_bag_summary',
+      title: 'Drop Bag Summary',
+      entries: [
+        { mile_label: 'Mi 18',   name: "Sally's Footbridge", time: '', note: '' },
+        { mile_label: 'Mi 34.5', name: 'Dry Fork',           time: '', note: '' },
+      ],
+      footer: 'All drop bags must be dropped at Sheridan Inn on Fri Jun 19 (12–6 PM). NOT allowed on buses. Label with runner name + bib number.'
+    },
+    {
+      type: 'crew_sequence',
+      title: 'Crew Day-Of Sequence',
+      steps: [
+        { time: '6 AM',     action: 'Optional: Drive to Sally Bridge / 2 hours' },
+        { time: '~9 AM',    action: 'Drive to Dry Fork AS / 3-4 hours' },
+        { time: '~1 PM',    action: 'Wait at Dry Fork for runners — crew them' },
+        { time: '~1-2 PM',  action: 'Drive back to Dayton or Sheridan (~1.5 hrs) → rest' },
+        { time: '~4 PM',    action: 'Drive to Dayton → park at Community Center' },
+        { time: '~5 PM',    action: 'Walk toward Tongue River TH (optional)' },
+        { time: '~7 PM',    action: 'Be at Scott Park finish for both runners' },
+      ]
+    }
+  ]
+};
+
+// ── Timeline renderer ────────────────────────────────
+function buildTimeline() {
+  const container = document.getElementById('timeline-container');
+  let html = '';
+
+  TIMELINE.sections.forEach(section => {
+    html += `<div class="day-divider"><span>${section.day}</span></div>`;
+    html += '<div class="stops-list">';
+    section.events.forEach(ev => {
+      const pills = (ev.pills || []).map(p =>
+        `<span class="pill pill-${p.style}">${p.text}</span>`
+      ).join('');
+      const locRow = ev.location ? `<span class="stop-sub">${ev.location}</span>` : '';
+      const pillRow = pills ? `<span class="stop-sub">${pills}</span>` : '';
+      html += `<div class="stop-row ${ev.display}">
+        <div class="stop-time">${ev.time}</div>
+        <div class="stop-info">
+          <span class="stop-name">${ev.name}</span>
+          ${locRow}${pillRow}
+        </div>
+        <div class="stop-mile">${ev.mile_label}</div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+
+  TIMELINE.cards.forEach(card => {
+    if (card.type === 'drop_bag_summary') {
+      html += `<div class="section-title" style="margin-top:24px;">${card.title}</div>`;
+      html += `<div class="card"><div class="card-body"><div style="display:flex;flex-direction:column;gap:10px;">`;
+      card.entries.forEach(e => {
+        const timeStr = e.time ? ` · ${e.time}` : '';
+        const noteStr = e.note ? ` · <span style="color:var(--red);font-size:11px;">${e.note}</span>` : '';
+        html += `<div style="font-size:13px;"><span class="pill pill-gold">${e.mile_label}</span> ${e.name}${timeStr}${noteStr}</div>`;
+      });
+      html += `<div style="font-size:11px;color:var(--red);padding-top:4px;border-top:1px solid var(--border);">${card.footer}</div>`;
+      html += `</div></div></div>`;
+    } else if (card.type === 'crew_sequence') {
+      html += `<div class="section-title">${card.title}</div>`;
+      html += `<div class="card"><div class="card-body"><div style="display:flex;flex-direction:column;gap:8px;font-size:12px;line-height:1.5;">`;
+      card.steps.forEach(s => {
+        html += `<div><span style="color:var(--text2);min-width:80px;display:inline-block;">${s.time}</span> ${s.action}</div>`;
+      });
+      html += `</div></div></div>`;
+    }
+  });
+
+  container.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════
+// GENERATED from config/stations.yaml — edit that file, not this
+// ══════════════════════════════════════════════════════
+const stations = [
+  { label:'Start',  loc:'Jaws Trailhead',          mi:0,    elev:"8,880'",  cutoff:null,       aid:'None',     gain:0,    loss:0    },
+  { label:'AS1',   loc:'Spring Marsh',             mi:8.5,  elev:"6,940'",  cutoff:null,       aid:'Minimal',  gain:270,  loss:2200 },
+  { label:'AS2',   loc:'Cathedral Rock',           mi:14.5, elev:"5,270'",  cutoff:null,       aid:'Minimal',  gain:660,  loss:2340 },
+  { label:'AS3',   loc:"Sally's Footbridge",       mi:18,   elev:"4,620'",  cutoff:'10:00 AM', aid:'Major',    gain:400,  loss:1060 },
+  { label:'AS4',   loc:'Bear Camp',                mi:21.5, elev:"6,640'",  cutoff:null,       aid:'Minimal',  gain:2100, loss:100  },
+  { label:'AS5',   loc:'Cow Camp',                 mi:28.5, elev:"6,680'",  cutoff:null,       aid:'Moderate', gain:1170, loss:1110 },
+  { label:'AS6',   loc:'Dry Fork',                 mi:34.5, elev:"7,480'",  cutoff:'3:00 PM',  aid:'Major',    gain:1250, loss:460  },
+  { label:'AS7',   loc:'Upper Sheep Creek',        mi:39.5, elev:"7,310'",  cutoff:'4:30 PM',  aid:'Minimal',  gain:390,  loss:490  },
+  { label:'AS8',   loc:'Lower Sheep Creek',        mi:44.5, elev:"4,800'",  cutoff:null,       aid:'Minimal',  gain:550,  loss:3100 },
+  { label:'AS9',   loc:'Tongue River Trailhead',   mi:46.7, elev:"4,210'",  cutoff:'6:45 PM',  aid:'Moderate', gain:240,  loss:810  },
+  { label:'AS10',  loc:'Home Stretch',             mi:49.7, elev:"3,980'",  cutoff:null,       aid:'Minimal',  gain:180,  loss:470  },
+  { label:'Finish',loc:'Scott Park, Dayton WY',    mi:52,   elev:"3,900'",  cutoff:'8:00 PM',  aid:'Major',    gain:20,   loss:80   },
+];
+
+function buildASChart() {
+  const tbody = document.getElementById('as-tbody');
+  tbody.innerHTML = stations.map(s => {
+    const cutoff = s.cutoff ? `<span style="color:var(--red);font-weight:700">${s.cutoff}</span>` : '—';
+    const gain = s.gain ? `<span style="color:var(--green);font-size:11px">+${s.gain.toLocaleString()}'</span>` : '—';
+    const loss = s.loss ? `<span style="color:var(--red);font-size:11px">-${s.loss.toLocaleString()}'</span>` : '—';
+    return `<tr>
+      <td><strong>${s.label}</strong><br><span style="font-size:10px;color:var(--text2)">${s.loc}</span></td>
+      <td style="font-weight:700">${s.mi}</td>
+      <td style="font-size:11px;color:var(--text2)">${s.elev}</td>
+      <td style="font-size:11px;color:var(--text2)">${s.aid}</td>
+      <td style="font-size:11px">${cutoff}</td>
+      <td class="icon-cell">${gain}</td>
+      <td class="icon-cell">${loss}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// GENERATED from config/todos.yaml — edit that file, not this
+// ══════════════════════════════════════════════════════
+const todoData = [
+  {
+    id: 'prerace',
+    label: 'Pre-Race · Friday Jun 19 · 12–6 PM',
+    sub: 'Sheridan Inn · 856 Broadway St, Sheridan WY  |  Packet Pick-Up + Drop Bag Drop-Off',
+    color: '#4d9de0',
+    items: [
+      'Pick up race packets for BOTH runners',
+      "Drop Sally's Footbridge bags ×2 — label name + bib",
+      'Drop Dry Fork bags ×2 — label name + bib',
+      'Confirm bus tickets for both runners (bus 3:15 AM Sat)',
+      'Prep crew carry-on bag for race day',
+    ]
+  },
+  {
+    id: 'sallybridge',
+    label: "Sally's Footbridge · Mi 18",
+    sub: 'Optional car stop · Difficult primitive road · Drop Bag · Medical · Cut-off 10:00 AM',
+    color: '#e53935',
+    items: [
+      'Re-apply toe-xxx',
+      'Change shoes and socks',
+      'Take  kcals for 5 hours',
+      'Apply sunscreen',
+      'Take poles - ?',
+      'Refill electrolites',
+    ]
+  },
+  {
+    id: 'dryfork',
+    label: 'Dry Fork · Mi 34.5',
+    sub: 'Major Aid · ★ Only full crew stop by car · Drop Bag · Medical · Cut-off 3:00 PM',
+    color: '#43a047',
+    items: [
+      "Locate and have ready both runners' drop bags",
+      'Set up crew area — lay out bag contents',
+      'Prepare warm food option (broth, ramen, etc.) — ?',
+      'Cold drinks ready',
+      'Refill electrolites and water (×2)',
+      'Re-apply toe-xxx',
+      'Sunscreen re-apply — ?',
+      'Check for blisters / foot care if needed (×2)',
+      'Assure enough kcal snacks in packs for each runner for next 5–6 hours',
+      'Charge phones if needed — hand back fully charged',
+    ]
+  },
+  {
+    id: 'homestretch',
+    label: 'Home Stretch · Mi 49.7',
+    sub: 'Foot or Bike ONLY — no vehicles  |  2.3 miles from finish  |  No cut-off',
+    color: '#fb8c00',
+    items: [
+      'Walk out ~2 mi from Scott Park if time allows',
+      'Handheld snacks + drink for final push',
+      'Walk/run back with runners to finish',
+    ]
+  },
+  {
+    id: 'finish',
+    label: 'Finish · Mi 52 · Scott Park',
+    sub: 'Scott Park, 2nd Ave, Dayton WY  |  Cut-off 8:00 PM  |  52M Awards 6:00 PM',
+    color: '#43a047',
+    items: [
+      'Collect finish-line drop bags (×2)',
+      'Dry warm clothes ready for each runner (×2)',
+      'Recovery food + cold drinks (×2)',
+      'Note: unclaimed bags → Innominate Coffee House, Ranchester (Sun 7–11 AM)',
+    ]
+  },
+];
+
+function buildTodos() {
+  const container = document.getElementById('todo-container');
+  container.innerHTML = todoData.map(stn => {
+    const done = getChecked(stn.id);
+    const total = stn.items.length;
+    const count = done.filter(Boolean).length;
+    const pct = total ? Math.round(count / total * 100) : 0;
+    const items = stn.items.map((task, i) => {
+      const checked = done[i];
+      return `<div class="todo-item${checked ? ' done' : ''}" onclick="toggleTodo('${stn.id}',${i},this)">
+        <div class="todo-check"></div>
+        <div class="todo-label">${task}</div>
+      </div>`;
+    }).join('');
+    return `<div class="todo-station${count > 0 && count < total ? ' open' : ''}" id="ts-${stn.id}">
+      <div class="todo-progress-bar"><div class="todo-progress-bar-fill" style="width:${pct}%"></div></div>
+      <div class="todo-station-header" onclick="toggleStation('${stn.id}')">
+        <div style="width:10px;height:10px;border-radius:50%;background:${stn.color};flex-shrink:0"></div>
+        <h3>${stn.label}</h3>
+        <div class="progress">${count}/${total}</div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="todo-station-sub">${stn.sub}</div>
+      <div class="todo-items">${items}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleStation(id) { document.getElementById('ts-' + id).classList.toggle('open'); }
+function getChecked(id) { try { return JSON.parse(localStorage.getItem('todo-' + id)) || []; } catch { return []; } }
+function toggleTodo(id, idx, el) {
+  const arr = getChecked(id); arr[idx] = !arr[idx];
+  localStorage.setItem('todo-' + id, JSON.stringify(arr));
+  el.classList.toggle('done'); updateTodoProgress(id);
+}
+function updateTodoProgress(id) {
+  const stn = todoData.find(s => s.id === id);
+  const done = getChecked(id);
+  const count = done.filter(Boolean).length;
+  const card = document.getElementById('ts-' + id);
+  card.querySelector('.progress').textContent = count + '/' + stn.items.length;
+  card.querySelector('.todo-progress-bar-fill').style.width = Math.round(count / stn.items.length * 100) + '%';
+}
+function resetAllTodos() {
+  if (!confirm('Reset all to-do checkboxes?')) return;
+  todoData.forEach(s => localStorage.removeItem('todo-' + s.id));
+  buildTodos();
+}
+
+// ══════════════════════════════════════════════════════
+// GENERATED from config/dropbags.yaml — edit that file, not this
+// ══════════════════════════════════════════════════════
+const dropBags = [
+  {
+    id: 'db-sally-y',
+    label: "Sally's Footbridge — Y",
+    runner: 'Y',
+    group: "Sally's Footbridge · Mi 18",
+    sub: "Mile 18  ·  Cut-off 10:00 AM",
+    color: '#e53935',
+    note: "Self-serve. Drop at Sheridan Inn Fri 12–6 PM. Label name + bib.",
+    items: [
+      'Snacks ~800 kcal',
+      'Shoes',
+      'Fresh socks',
+      'Poles',
+      'Electrolites refill',
+      'Sunscreen',
+    ],
+  },
+  {
+    id: 'db-sally-n',
+    label: "Sally's Footbridge — N",
+    runner: 'N',
+    group: "Sally's Footbridge · Mi 18",
+    sub: "Mile 18  ·  Cut-off 10:00 AM",
+    color: '#e53935',
+    note: "Self-serve. Drop at Sheridan Inn Fri 12–6 PM. Label name + bib.",
+    items: [
+      'Snacks ~800 kcal',
+      'Shoes',
+      'Fresh socks',
+      'Electrolites refill',
+    ],
+  },
+  {
+    id: 'db-dryfork-y',
+    label: 'Dry Fork — Y',
+    runner: 'Y',
+    group: "Dry Fork · Mi 34.5",
+    sub: "Mile 34.5  ·  Cut-off 3:00 PM",
+    color: '#43a047',
+    note: "Crew will be here. Drop at Sheridan Inn Fri 12–6 PM. Label name + bib.",
+    items: [
+      'Snacks ~800 kcal',
+      'Fresh socks',
+      'Shoes',
+    ],
+  },
+  {
+    id: 'db-dryfork-n',
+    label: 'Dry Fork — N',
+    runner: 'N',
+    group: "Dry Fork · Mi 34.5",
+    sub: "Mile 34.5  ·  Cut-off 3:00 PM",
+    color: '#43a047',
+    note: "Crew will be here. Drop at Sheridan Inn Fri 12–6 PM. Label name + bib.",
+    items: [
+      'Snacks ~800 kcal',
+      'Fresh socks',
+      'Shoes — ?',
+    ],
+  },
+  {
+    id: 'db-carry',
+    label: 'Crew Carry-On Bag',
+    runner: null,
+    group: null,
+    sub: 'Stays in crew vehicle — brought to every crew stop',
+    color: '#7c5cbf',
+    note: 'This bag travels with the crew at all times.',
+    items: [
+      'Electrolytes / Gatorade for runners (×2)',
+      'Phone chargers + battery packs',
+      'Medical kit',
+      'Baby wipes',
+      'Sunscreen',
+      'Insect repellent',
+      'Change of clothes',
+    ],
+  },
+];
+
+function buildDropBags() {
+  const container = document.getElementById('dropbag-container');
+  let html = '';
+  let lastGroup = null;
+
+  dropBags.forEach(bag => {
+    if (bag.group && bag.group !== lastGroup) {
+      html += `<div class="section-title">${bag.group}</div>`;
+      lastGroup = bag.group;
+    } else if (!bag.group) {
+      lastGroup = null;
+    }
+
+    const done = getDBChecked(bag.id);
+    const total = bag.items.length;
+    const count = done.filter(Boolean).length;
+    const pct = total ? Math.round(count / total * 100) : 0;
+    const runnerBadge = bag.runner
+      ? `<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:rgba(255,255,255,0.1);margin-left:6px;">${bag.runner}</span>`
+      : '';
+    const items = bag.items.map((item, i) => {
+      const checked = done[i];
+      return `<div class="todo-item${checked ? ' done' : ''}" onclick="toggleDB('${bag.id}',${i},this)">
+        <div class="todo-check"></div>
+        <div class="todo-label">${item}</div>
+      </div>`;
+    }).join('');
+    html += `<div class="todo-station" id="dbs-${bag.id}">
+      <div class="todo-progress-bar"><div class="todo-progress-bar-fill" style="width:${pct}%"></div></div>
+      <div class="todo-station-header" onclick="toggleDBStation('${bag.id}')">
+        <div style="width:10px;height:10px;border-radius:50%;background:${bag.color};flex-shrink:0"></div>
+        <h3>${bag.label}${runnerBadge}</h3>
+        <div class="progress">${count}/${total}</div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="todo-station-sub">${bag.sub}${bag.note ? '<br><span style="font-style:italic;color:var(--text2)">' + bag.note + '</span>' : ''}</div>
+      <div class="todo-items">${items}</div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleDBStation(id) { document.getElementById('dbs-' + id).classList.toggle('open'); }
+function getDBChecked(id) { try { return JSON.parse(localStorage.getItem('db-' + id)) || []; } catch { return []; } }
+function toggleDB(id, idx, el) {
+  const arr = getDBChecked(id); arr[idx] = !arr[idx];
+  localStorage.setItem('db-' + id, JSON.stringify(arr));
+  el.classList.toggle('done');
+  const bag = dropBags.find(b => b.id === id);
+  const count = arr.filter(Boolean).length;
+  const card = document.getElementById('dbs-' + id);
+  card.querySelector('.progress').textContent = count + '/' + bag.items.length;
+  card.querySelector('.todo-progress-bar-fill').style.width = Math.round(count / bag.items.length * 100) + '%';
+}
+function resetAllDropBags() {
+  if (!confirm('Reset all drop bag checkboxes?')) return;
+  dropBags.forEach(b => localStorage.removeItem('db-' + b.id));
+  buildDropBags();
+}
+
+// ══════════════════════════════════════════════════════
+// GENERATED from config/crew.yaml — edit that file, not this
+// ══════════════════════════════════════════════════════
+const crewStops = [
+  {
+    name: "Sally's Footbridge Aid Station",
+    mile: '18',
+    cutoff: '10:00 AM Sat',
+    access: '🚗 By car — primitive road, creek fords required',
+    image: 'img/crew-footbridge.jpg',
+    directions: 'From Dayton:\n1. Cross the Tongue River Bridge (eastern side of town) → turn north on Wyoming Hwy 343\n2. Proceed ~5 miles → turn LEFT\n3. Proceed ~14.5 miles → turn LEFT\n4. Proceed ~15.6 miles → turn LEFT\n5. Proceed forward through the cattle guard onto primitive road\n6. Ford first creek at 0.45 miles, ford second creek at 0.6 miles\n7. Re-enter Wyoming (sign at 45° Latitude)\n8. Cross the Little Bighorn River on a bridge at 1.5 miles\n9. Continue on north side of river → designated crew parking at ~2.5 miles',
+    parking: 'Park well off the road — do NOT block the private bridge to cabins on the south side of the river. Parking is very limited; further up is reserved for aid station and emergency vehicles only.',
+    restrictions: '⚠️ Primitive road — creek fords may require high clearance vehicle\n⛔ Do not block the road or the private bridge\n⚠️ Total distance from Dayton: ~35 miles (~2 hours)\n⛔ Going from Dry Fork to Footbridge is ~70 miles — NOT feasible to crew both',
+    walk: '~¾ mile on foot from parking area up the canyon to the AS (past Wyoming Game & Fish Patrol Cabin)',
+    notes: "Difficult access — the race guide calls this 'a difficult place to reach to crew your runner.' If crewing here, go BEFORE the race starts (depart ~6 AM) and drive directly to Dry Fork afterward (~3–4 hours). Do not attempt Footbridge after Dry Fork.",
+  },
+  {
+    name: 'Dry Fork Aid Station',
+    mile: '34.5',
+    cutoff: '3:00 PM Sat',
+    access: '🚗 By car',
+    image: 'img/crew-dryfork.jpg',
+    directions: 'From Dayton:\n1. Take Hwy 14 west toward Burgess Junction (~25 miles)\n2. At Burgess Junction → RIGHT on Forest Service Road #15\n3. Past Burgess Ranger Station — stay LEFT\n4. Cross Fools Creek (~5 miles from Burgess Junction)\n5. Shortly after creek → RIGHT on FS Road #168 (Freeze Out Road)\n6. ~5 miles on FS Road #168 → Dry Fork Aid Station',
+    parking: 'Race official will direct you to designated parking area just before the AS. Short walk to aid station from lot.',
+    restrictions: '⛔ Park in designated area only\n⚠️ Race official stops you before AS entrance',
+    walk: 'Short walk from parking to AS',
+    notes: 'The ONLY full car-crew stop on the course before the finish. Arrive early — aim for noon. Both runners can arrive as early as ~1:30 PM. Drive time from Dayton: ~1.5–2 hours. After BOTH runners depart → drive back toward Dayton (~1.5 hrs) to set up for finish.',
+  },
+  {
+    name: 'Home Stretch',
+    mile: '49.7',
+    cutoff: 'None',
+    access: '🚲 Foot or Bike ONLY',
+    directions: 'Only 2.3 miles from Scott Park finish. Walk or run out from the finish area on the course route.',
+    parking: 'Same as Scott Park finish area.',
+    restrictions: '⛔ NO VEHICLES — foot access only from finish side',
+    walk: '~2.3 miles out from Scott Park finish',
+    notes: 'Great morale stop — runners are exhausted but almost done. Easy to walk out from finish and escort runners home. Walk/run back together.',
+  },
+  {
+    name: 'Scott Park — Finish',
+    mile: '52',
+    cutoff: '8:00 PM Sat',
+    access: '🚗 By car + shuttle',
+    directions: 'Scott Park, 2nd Ave, Dayton WY.\nParking shuttle runs between Scott Park and Dayton Community Center (1100 US-14) from 12 PM – 8 PM.',
+    parking: 'Option 1: Dayton Community Center (1100 US-14) → take parking shuttle to Scott Park\nOption 2: Park near Scott Park directly on 2nd Ave, Dayton WY',
+    restrictions: '⚠️ Follow local parking rules\n⚠️ Keep finish area clear for finishers',
+    walk: 'Shuttle or short walk to finish line',
+    notes: 'Finish Line Picnic Celebration: 12 PM – 8 PM. 52 Mile Awards ceremony: 6:00 PM at Scott Park Band Shell. Cut-off 8:00 PM sharp. Unclaimed drop bags loaded at 8 PM → retrieve Sunday 7–11 AM at Innominate Coffee House & Bakery, 652 US-14, Ranchester WY.',
+  },
+];
+
+function buildCrew() {
+  const container = document.getElementById('crew-container');
+  let html = crewStops.map(s => `
+    <div class="crew-stop-card">
+      <div class="crew-stop-header">
+        <div>
+          <h3>${s.name}</h3>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px">Mile ${s.mile} · ${s.access}</div>
+        </div>
+        <div class="cutoff">Cut-off<br>${s.cutoff}</div>
+      </div>
+      <div class="crew-field">
+        <div class="crew-field-label">Directions</div>
+        <div class="crew-field-val" style="white-space:pre-line">${s.directions}</div>
+      </div>
+      <div class="crew-field">
+        <div class="crew-field-label">Parking</div>
+        <div class="crew-field-val" style="white-space:pre-line">${s.parking}</div>
+      </div>
+      <div class="crew-field">
+        <div class="crew-field-label">Walk / Access</div>
+        <div class="crew-field-val walk">${s.walk}</div>
+      </div>
+      <div class="crew-field">
+        <div class="crew-field-label">Restrictions</div>
+        <div class="crew-field-val warn" style="white-space:pre-line">${s.restrictions}</div>
+      </div>
+      <div class="crew-field">
+        <div class="crew-field-label">Notes</div>
+        <div class="crew-field-val">${s.notes}</div>
+      </div>
+      ${s.image ? `<div class="crew-field">
+        <div class="crew-field-label">Navigation Photos</div>
+        <img src="${s.image}" style="width:100%;border-radius:6px;margin-top:6px;display:block" loading="lazy">
+      </div>` : ''}
+    </div>
+  `).join('');
+  container.innerHTML = html;
+}
+
+// ── Init ─────────────────────────────────────────────
+buildTimeline();
+buildASChart();
+buildTodos();
+buildDropBags();
+buildCrew();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>

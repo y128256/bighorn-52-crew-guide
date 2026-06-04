@@ -1,0 +1,14 @@
+{
+  "name": "Big Horn 52 Race Guide",
+  "short_name": "Big Horn 52",
+  "description": "Crew & runner guide for Big Horn 52 ultramarathon",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f1117",
+  "theme_color": "#43a047",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
