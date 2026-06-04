@@ -1,5 +1,5 @@
-const CACHE = 'bighorn52-v1';
-const ASSETS = ['./index.html', './manifest.json'];
+const CACHE = 'bighorn52-v2';
+const ASSETS = ['./index.html', './manifest.json', './elevation-profile.png', './course-map.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
