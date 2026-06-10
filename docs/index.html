@@ -863,30 +863,6 @@ function buildTimeline() {
     }
   });
 
-  html += `<div class="section-title" style="margin-top:24px;">Course Map</div>`;
-  html += `<a href="https://www.google.com/maps/d/u/0/viewer?mid=1HaYw9pdUpi3e281lYxLICXPMYxVZfTo&ll=44.90704112178668%2C-107.55590999999998&z=11" target="_blank" rel="noopener" style="display:block;text-decoration:none;">
-    <div class="card">
-      <div style="padding:10px 12px 6px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:baseline;">
-        <span style="font-size:11px;font-weight:700;color:var(--text2);">52-mile route · aid stations · OpenStreetMap</span>
-        <span style="font-size:11px;color:var(--text2);">Open in Google Maps ↗</span>
-      </div>
-      <div style="background:#fff;border-radius:0 0 var(--card-radius) var(--card-radius);">
-        <img src="./course-map.png" alt="Big Horn 52 Course Map"
-             style="display:block;width:100%;height:auto;">
-      </div>
-    </div>
-  </a>`;
-
-  html += `<div class="section-title" style="margin-top:24px;">Elevation Profile</div>`;
-  html += `<div class="card">
-    <div style="padding:10px 12px 6px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:baseline;">
-      <span style="font-size:11px;font-weight:700;color:var(--text2);">50 MI · Elev Loss 4,962 ft · Climb 8,293 ft · Drop 13,255 ft</span>
-    </div>
-    <div style="background:#fff;border-radius:0 0 var(--card-radius) var(--card-radius);">
-      <img src="./elevation-profile.png" alt="Big Horn 52 Elevation Profile"
-           style="display:block;width:100%;height:auto;">
-    </div>
-  </div>`;
 
   container.innerHTML = html;
 }
