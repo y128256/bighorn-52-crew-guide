@@ -76,9 +76,14 @@
     padding-bottom: var(--safe-bottom);
     z-index: 100;
     flex-shrink: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  nav::-webkit-scrollbar { display: none; }
   nav button {
-    flex: 1;
+    flex: 0 0 auto;
+    min-width: 64px;
     background: none;
     border: none;
     color: var(--text2);
@@ -93,13 +98,13 @@
     letter-spacing: 0.3px;
     transition: color 0.15s;
     -webkit-tap-highlight-color: transparent;
-    padding-bottom: 4px;
+    padding: 0 8px 4px;
   }
   nav button svg { width: 22px; height: 22px; }
   nav button.active { color: var(--accent); }
   nav button.active svg path, nav button.active svg rect,
   nav button.active svg circle, nav button.active svg polyline,
-  nav button.active svg line { stroke: var(--accent); }
+  nav button.active svg line, nav button.active svg polygon { stroke: var(--accent); }
 
   /* ── Cards ─────────────────────────────────────── */
   .card {
@@ -338,6 +343,71 @@
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* ── Map / Vert / Weather tabs ────────────────── */
+  .map-open-btn {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    color: #4d9de0;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .tab-img {
+    width: 100%;
+    display: block;
+    border-radius: var(--card-radius);
+    border: 1px solid var(--border);
+  }
+
+  .weather-alert {
+    background: rgba(251,140,0,0.10);
+    border: 1px solid var(--orange);
+    border-radius: var(--card-radius);
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .weather-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .weather-stat {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 10px 6px;
+    text-align: center;
+  }
+  .weather-stat-val { font-size: 20px; font-weight: 700; }
+  .weather-stat-label { font-size: 10px; color: var(--text2); margin-top: 2px; }
+  .weather-table td { white-space: nowrap; }
+  .weather-table tr.storm-risk td { background: rgba(251,140,0,0.08); }
+  .weather-table .time-col { font-weight: 700; }
+  .weather-table .prob-high { color: var(--orange); font-weight: 700; }
+  .weather-table .prob-ok   { color: var(--text2); }
+  .weather-note { font-size: 10px; color: var(--text2); margin-top: 8px; }
+  .weather-zone-chip {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 10px;
+    margin-left: 2px;
+  }
+  .zone-high   { background: rgba(77,157,224,0.18); color: #4d9de0; }
+  .zone-mid    { background: rgba(124,92,191,0.18); color: var(--accent2); }
+  .zone-valley { background: rgba(67,160,71,0.18);  color: var(--green); }
 </style>
 </head>
 <body>
@@ -400,6 +470,190 @@
       <div id="crew-container"></div>
     </section>
 
+    <!-- ═══════════════════ COURSE MAP ═══════════════════ -->
+    <section id="tab-map" class="tab-panel">
+      <img src="course-map.png" class="tab-img" loading="lazy" alt="Big Horn 52 Course Map">
+      <a href="https://www.google.com/maps/d/u/0/viewer?mid=1HaYw9pdUpi3e281lYxLICXPMYxVZfTo&ll=44.90704112178668,-107.55590999999998&z=11" target="_blank" rel="noopener" class="map-open-btn">
+        ↗ Open Interactive Map in Google Maps
+      </a>
+    </section>
+
+    <!-- ═══════════════════ ELEVATION PROFILE ═══════════════════ -->
+    <section id="tab-vert" class="tab-panel">
+      <img src="elevation-profile.png" class="tab-img" loading="lazy" alt="Big Horn 52 Elevation Profile">
+      <div style="font-size:10px;color:var(--text2);margin-top:8px;">Pinch to zoom · Total: ~9,000 ft gain / ~12,000 ft loss</div>
+    </section>
+
+    <!-- ═══════════════════ WEATHER ═══════════════════ -->
+    <section id="tab-weather" class="tab-panel">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;">Race day Jun 20 · Forecast fetched Jun 10 · Open-Meteo · MDT (UTC−6)</div>
+
+      <div class="weather-alert">
+        ⚠️ <strong>T-storm risk 37–38% from 1–6 PM</strong> — most exposed: Bear Camp → Dry Fork → Upper Sheep Creek (Mi 21–39.5). Recheck Jun 17 and Jun 19.
+      </div>
+
+      <div class="weather-stat-grid">
+        <div class="weather-stat">
+          <div class="weather-stat-val" style="color:#4d9de0;">36°F</div>
+          <div class="weather-stat-label">Start 5 AM</div>
+        </div>
+        <div class="weather-stat">
+          <div class="weather-stat-val" style="color:var(--red);">75°F</div>
+          <div class="weather-stat-label">Valley peak</div>
+        </div>
+        <div class="weather-stat">
+          <div class="weather-stat-val" style="color:var(--orange);">38%</div>
+          <div class="weather-stat-label">Storm peak</div>
+        </div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="as-table weather-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Zone</th>
+              <th>Temp</th>
+              <th>⛈️%</th>
+              <th>Wind / Gust</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="time-col" style="color:#4d9de0;">5:00 AM</td>
+              <td><span class="weather-zone-chip zone-high">HIGH</span></td>
+              <td>36°F</td>
+              <td class="prob-ok">0%</td>
+              <td>3 / 5 mph</td>
+              <td style="font-size:10px;">❄️ Coldest — layers</td>
+            </tr>
+            <tr>
+              <td class="time-col">6:00 AM</td>
+              <td><span class="weather-zone-chip zone-high">HIGH</span></td>
+              <td>37°F</td>
+              <td class="prob-ok">0%</td>
+              <td>3 / 5 mph</td>
+              <td style="font-size:10px;">Clearing</td>
+            </tr>
+            <tr>
+              <td class="time-col">7:00 AM</td>
+              <td><span class="weather-zone-chip zone-high">HIGH</span></td>
+              <td>40°F</td>
+              <td class="prob-ok">10%</td>
+              <td>5 / 6 mph</td>
+              <td style="font-size:10px;">Sunrise ~5:30 AM</td>
+            </tr>
+            <tr>
+              <td class="time-col">8:00 AM</td>
+              <td><span class="weather-zone-chip zone-mid">MID</span></td>
+              <td>44°F</td>
+              <td class="prob-ok">14%</td>
+              <td>4 / 9 mph</td>
+              <td style="font-size:10px;">Thin clouds</td>
+            </tr>
+            <tr>
+              <td class="time-col">9:00 AM</td>
+              <td><span class="weather-zone-chip zone-mid">MID</span></td>
+              <td>49°F</td>
+              <td class="prob-ok">14%</td>
+              <td>5 / 11 mph</td>
+              <td style="font-size:10px;">Great conditions</td>
+            </tr>
+            <tr>
+              <td class="time-col">10:00 AM</td>
+              <td><span class="weather-zone-chip zone-valley">VAL</span></td>
+              <td>56°F</td>
+              <td class="prob-ok">14%</td>
+              <td>6 / 13 mph</td>
+              <td style="font-size:10px;">Sally's cutoff ☀️</td>
+            </tr>
+            <tr>
+              <td class="time-col">11:00 AM</td>
+              <td><span class="weather-zone-chip zone-valley">VAL</span></td>
+              <td>58°F</td>
+              <td class="prob-ok">14%</td>
+              <td>6 / 15 mph</td>
+              <td style="font-size:10px;">Sally's Footbridge</td>
+            </tr>
+            <tr>
+              <td class="time-col">12:00 PM</td>
+              <td><span class="weather-zone-chip zone-mid">MID</span></td>
+              <td>60°F</td>
+              <td class="prob-ok">14%</td>
+              <td>6 / 16 mph</td>
+              <td style="font-size:10px;">Climbing to Bear Camp</td>
+            </tr>
+            <tr class="storm-risk">
+              <td class="time-col" style="color:var(--orange);">1:00 PM</td>
+              <td><span class="weather-zone-chip zone-mid">MID</span></td>
+              <td>61°F</td>
+              <td class="prob-high">37%</td>
+              <td>6 / 17 mph</td>
+              <td style="font-size:10px;color:var(--orange);">⚠️ Storm window opens</td>
+            </tr>
+            <tr class="storm-risk">
+              <td class="time-col" style="color:var(--orange);">2:00 PM</td>
+              <td><span class="weather-zone-chip zone-mid">MID</span></td>
+              <td>63°F</td>
+              <td class="prob-high">37%</td>
+              <td>6 / 18 mph</td>
+              <td style="font-size:10px;color:var(--orange);">⚠️ Kearn's — exposed</td>
+            </tr>
+            <tr class="storm-risk">
+              <td class="time-col" style="color:var(--orange);">3:00 PM</td>
+              <td><span class="weather-zone-chip zone-mid">MID</span></td>
+              <td>64°F</td>
+              <td class="prob-high">37%</td>
+              <td>6 / 18 mph</td>
+              <td style="font-size:10px;color:var(--orange);">⚠️ Dry Fork cutoff</td>
+            </tr>
+            <tr class="storm-risk">
+              <td class="time-col" style="color:var(--orange);">4:00 PM</td>
+              <td><span class="weather-zone-chip zone-mid">MID</span></td>
+              <td>63°F</td>
+              <td class="prob-high">37%</td>
+              <td>6 / 17 mph</td>
+              <td style="font-size:10px;color:var(--orange);">⚠️ Upper Sheep Cr.</td>
+            </tr>
+            <tr class="storm-risk">
+              <td class="time-col" style="color:var(--orange);">5:00 PM</td>
+              <td><span class="weather-zone-chip zone-mid">MID</span></td>
+              <td>61°F</td>
+              <td class="prob-high">38%</td>
+              <td>8 / 15 mph</td>
+              <td style="font-size:10px;color:var(--orange);">⚠️ Ridge descent</td>
+            </tr>
+            <tr class="storm-risk">
+              <td class="time-col" style="color:var(--orange);">6:00 PM</td>
+              <td><span class="weather-zone-chip zone-valley">VAL</span></td>
+              <td>67°F</td>
+              <td class="prob-high">38%</td>
+              <td>5 / 12 mph</td>
+              <td style="font-size:10px;">Tongue River TH cutoff</td>
+            </tr>
+            <tr>
+              <td class="time-col">7:00 PM</td>
+              <td><span class="weather-zone-chip zone-valley">VAL</span></td>
+              <td>71°F</td>
+              <td class="prob-ok">26%</td>
+              <td>5 / 9 mph</td>
+              <td style="font-size:10px;">Home Stretch</td>
+            </tr>
+            <tr>
+              <td class="time-col" style="color:var(--green);">8:00 PM</td>
+              <td><span class="weather-zone-chip zone-valley">VAL</span></td>
+              <td>65°F</td>
+              <td class="prob-ok">26%</td>
+              <td>4 / 4 mph</td>
+              <td style="font-size:10px;">🏁 Finish cutoff</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="weather-note">⛈️ = thunderstorm probability · No precip expected · 0.0 mm all zones all day</div>
+    </section>
+
   </main>
 
   <nav id="nav">
@@ -422,6 +676,18 @@
     <button data-tab="crew" onclick="switchTab('crew', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Crew
+    </button>
+    <button data-tab="map" onclick="switchTab('map', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+      Map
+    </button>
+    <button data-tab="vert" onclick="switchTab('vert', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Vert
+    </button>
+    <button data-tab="weather" onclick="switchTab('weather', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      Weather
     </button>
   </nav>
 </div>
