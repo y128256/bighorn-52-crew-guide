@@ -1,0 +1,87 @@
+# ══════════════════════════════════════════════════════════════════════
+# crew.yaml — Crew Access tab
+#
+# rules: general crew rules shown in the red warning box at the top
+#   label — short bold label (shown in red)
+#   text  — body text
+#
+# stops: crew-accessible locations with directions and logistics
+#   station_id  — links to stations.yaml (name, mile, cutoff auto-filled)
+#                 must have crew: car or crew: bike in stations.yaml
+#   access      — display string for access type (shown under station name)
+#   directions  — step-by-step driving/access instructions (multiline)
+#   parking     — where to park
+#   restrictions — warning text (shown in red)
+#   walk        — distance/description to walk from parking to AS
+#   notes       — additional context and logistics
+#
+# VALIDATION: station_id must exist in stations.yaml and have crew != false.
+# ══════════════════════════════════════════════════════════════════════
+
+stops:
+
+  - station_id: AS3
+    maps_coords: "44.9824831,-107.6453769"
+    image: "img/crew-footbridge.jpg"
+    access: "🚗 By car — primitive road, creek fords required"
+    directions: |
+      From Dayton:
+      1. Cross the Tongue River Bridge (eastern side of town) → turn north on Wyoming Hwy 343
+      2. Proceed ~5 miles → turn LEFT
+      3. Proceed ~14.5 miles → turn LEFT
+      4. Proceed ~15.6 miles → turn LEFT
+      5. Proceed forward through the cattle guard onto primitive road
+      6. Ford first creek at 0.45 miles, ford second creek at 0.6 miles
+      7. Re-enter Wyoming (sign at 45° Latitude)
+      8. Cross the Little Bighorn River on a bridge at 1.5 miles
+      9. Continue on north side of river → designated crew parking at ~2.5 miles
+    parking: "Park well off the road — do NOT block the private bridge to cabins on the south side of the river. Parking is very limited; further up is reserved for aid station and emergency vehicles only."
+    restrictions: |
+      ⚠️ Primitive road — creek fords may require high clearance vehicle
+      ⛔ Do not block the road or the private bridge
+      ⚠️ Total distance from Dayton: ~35 miles (~2 hours)
+      ⛔ Going from Dry Fork to Footbridge is ~70 miles — NOT feasible to crew both
+    walk: "~¾ mile on foot from parking area up the canyon to the AS (past Wyoming Game & Fish Patrol Cabin)"
+    notes: "Difficult access — the race guide calls this 'a difficult place to reach to crew your runner.' If crewing here, go BEFORE the race starts (depart ~6 AM) and drive directly to Dry Fork afterward (~3–4 hours). Do not attempt Footbridge after Dry Fork."
+
+  - station_id: AS6
+    maps_coords: "44.8378295,-107.5034834"
+    image: "img/crew-dryfork.jpg"
+    access: "🚗 By car"
+    directions: |
+      From Dayton:
+      1. Take Hwy 14 west toward Burgess Junction (~25 miles)
+      2. At Burgess Junction → RIGHT on Forest Service Road #15
+      3. Past Burgess Ranger Station — stay LEFT
+      4. Cross Fools Creek (~5 miles from Burgess Junction)
+      5. Shortly after creek → RIGHT on FS Road #168 (Freeze Out Road)
+      6. ~5 miles on FS Road #168 → Dry Fork Aid Station
+    parking: "Race official will direct you to designated parking area just before the AS. Short walk to aid station from lot."
+    restrictions: |
+      ⛔ Park in designated area only
+      ⚠️ Race official stops you before AS entrance
+    walk: "Short walk from parking to AS"
+    notes: "The ONLY full car-crew stop on the course before the finish. Arrive early — aim for noon. Both runners can arrive as early as ~1:30 PM. Drive time from Dayton: ~1.5–2 hours. After BOTH runners depart → drive back toward Dayton (~1.5 hrs) to set up for finish."
+
+  - station_id: AS10
+    access: "🚲 Foot or Bike ONLY"
+    directions: "Only 2.3 miles from Scott Park finish. Walk or run out from the finish area on the course route."
+    parking: "Same as Scott Park finish area."
+    restrictions: |
+      ⛔ NO VEHICLES — foot access only from finish side
+    walk: "~2.3 miles out from Scott Park finish"
+    notes: "Great morale stop — runners are exhausted but almost done. Easy to walk out from finish and escort runners home. Walk/run back together."
+
+  - station_id: Finish
+    access: "🚗 By car + shuttle"
+    directions: |
+      Scott Park, 2nd Ave, Dayton WY.
+      Parking shuttle runs between Scott Park and Dayton Community Center (1100 US-14) from 12 PM – 8 PM.
+    parking: |
+      Option 1: Dayton Community Center (1100 US-14) → take parking shuttle to Scott Park
+      Option 2: Park near Scott Park directly on 2nd Ave, Dayton WY
+    restrictions: |
+      ⚠️ Follow local parking rules
+      ⚠️ Keep finish area clear for finishers
+    walk: "Shuttle or short walk to finish line"
+    notes: "Finish Line Picnic Celebration: 12 PM – 8 PM. 52 Mile Awards ceremony: 6:00 PM at Scott Park Band Shell. Cut-off 8:00 PM sharp. Unclaimed drop bags loaded at 8 PM → retrieve Sunday 7–11 AM at Innominate Coffee House & Bakery, 652 US-14, Ranchester WY."

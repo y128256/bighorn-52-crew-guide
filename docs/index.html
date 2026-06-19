@@ -1185,6 +1185,7 @@ const crewStops = [
     mile: '18',
     cutoff: '10:00 AM Sat',
     access: '🚗 By car — primitive road, creek fords required',
+    maps_coords: '44.9824831,-107.6453769',
     image: 'img/crew-footbridge.jpg',
     directions: 'From Dayton:\n1. Cross the Tongue River Bridge (eastern side of town) → turn north on Wyoming Hwy 343\n2. Proceed ~5 miles → turn LEFT\n3. Proceed ~14.5 miles → turn LEFT\n4. Proceed ~15.6 miles → turn LEFT\n5. Proceed forward through the cattle guard onto primitive road\n6. Ford first creek at 0.45 miles, ford second creek at 0.6 miles\n7. Re-enter Wyoming (sign at 45° Latitude)\n8. Cross the Little Bighorn River on a bridge at 1.5 miles\n9. Continue on north side of river → designated crew parking at ~2.5 miles',
     parking: 'Park well off the road — do NOT block the private bridge to cabins on the south side of the river. Parking is very limited; further up is reserved for aid station and emergency vehicles only.',
@@ -1197,6 +1198,7 @@ const crewStops = [
     mile: '34.5',
     cutoff: '3:00 PM Sat',
     access: '🚗 By car',
+    maps_coords: '44.8378295,-107.5034834',
     image: 'img/crew-dryfork.jpg',
     directions: 'From Dayton:\n1. Take Hwy 14 west toward Burgess Junction (~25 miles)\n2. At Burgess Junction → RIGHT on Forest Service Road #15\n3. Past Burgess Ranger Station — stay LEFT\n4. Cross Fools Creek (~5 miles from Burgess Junction)\n5. Shortly after creek → RIGHT on FS Road #168 (Freeze Out Road)\n6. ~5 miles on FS Road #168 → Dry Fork Aid Station',
     parking: 'Race official will direct you to designated parking area just before the AS. Short walk to aid station from lot.',
@@ -1239,6 +1241,13 @@ function buildCrew() {
         </div>
         <div class="cutoff">Cut-off<br>${s.cutoff}</div>
       </div>
+      ${s.maps_coords ? `<div class="crew-field">
+        <div class="crew-field-label">Navigate</div>
+        <div class="crew-field-val">
+          <a href="https://maps.google.com/?q=${s.maps_coords}" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--accent);color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;">📍 Open in Google Maps</a>
+          <div style="font-size:10px;color:var(--text2);margin-top:4px;">Coords: ${s.maps_coords}</div>
+        </div>
+      </div>` : ''}
       <div class="crew-field">
         <div class="crew-field-label">Directions</div>
         <div class="crew-field-val" style="white-space:pre-line">${s.directions}</div>
