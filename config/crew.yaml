@@ -73,6 +73,7 @@ stops:
     notes: "Great morale stop — runners are exhausted but almost done. Easy to walk out from finish and escort runners home. Walk/run back together."
 
   - station_id: Finish
+    maps_coords: "44.87934,-107.26033"
     access: "🚗 By car + shuttle"
     directions: |
       Scott Park, 2nd Ave, Dayton WY.
